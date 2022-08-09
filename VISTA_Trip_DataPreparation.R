@@ -41,6 +41,8 @@ dest_within_region <- df %>%
 HHdata <- read.csv("C:/Users/e18933/OneDrive - RMIT University/DOT_VISTA/Processed Data/H_VISTA_1220_Coord.csv")
 Pdata <- read.csv("C:/Users/e18933/OneDrive - RMIT University/DOT_VISTA/Processed Data/P_VISTA_1220_Coord.csv")
 
+# note: change orig_within_region to dest_within_region for modelling based on BE features on destinations
+###########################################################################################################
 Trip_HHJoined <- merge(orig_within_region,HHdata, by="hhid")
 Trip_HHP_Joined <- merge(Trip_HHJoined,Pdata, by="persid")
 
