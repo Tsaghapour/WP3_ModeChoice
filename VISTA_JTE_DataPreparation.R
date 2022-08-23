@@ -9,7 +9,7 @@ suppressPackageStartupMessages(library(tidyr)) # for pivoting data
 suppressPackageStartupMessages(library(fitdistrplus)) # for log normal distributions
 suppressPackageStartupMessages(library(ggplot2)) # for plotting data
 suppressPackageStartupMessages(library(purrr)) # for nested dataframes
-suppressPackageStartupMessages(library(stringr))
+suppressPackageStartupMessages(library(stringr))# for columns editings
 
 jtedata <- read.csv("C:/Users/e18933/OneDrive - RMIT University/DOT_VISTA/Processed Data/JTE_VISTA_1220_coord.csv",header=T, na.strings="N/A")
 df <- jtedata %>%
