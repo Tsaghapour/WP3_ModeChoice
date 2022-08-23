@@ -9,7 +9,7 @@ suppressPackageStartupMessages(library(tidyr)) # for pivoting data
 suppressPackageStartupMessages(library(fitdistrplus)) # for log normal distributions
 suppressPackageStartupMessages(library(ggplot2)) # for plotting data
 suppressPackageStartupMessages(library(purrr)) # for nested dataframes
-suppressPackageStartupMessages(library(stringr))# for columns editting
+suppressPackageStartupMessages(library(stringr))# for editing columns 
 suppressPackageStartupMessages(library(tidyverse))# for manipulating data
 
 #reading journey to work and journey to education data
