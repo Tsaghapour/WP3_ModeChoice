@@ -9,8 +9,8 @@ suppressPackageStartupMessages(library(tidyr)) # for pivoting data
 suppressPackageStartupMessages(library(fitdistrplus)) # for log normal distributions
 suppressPackageStartupMessages(library(ggplot2)) # for plotting data
 suppressPackageStartupMessages(library(purrr)) # for nested dataframes
-suppressPackageStartupMessages(library(stringr))
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(stringr))# for columns editting
+suppressPackageStartupMessages(library(tidyverse))# for manipulating data
 
 #reading journey to work and journey to education data
 jtwdata <- read.csv("C:/Users/e18933/OneDrive - RMIT University/DOT_VISTA/Processed Data/JTW_VISTA_1220_coord.csv",header=T, na.strings="N/A")
