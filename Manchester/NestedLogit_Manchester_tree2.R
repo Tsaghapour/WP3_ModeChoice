@@ -27,7 +27,7 @@ apollo_initialise()
 ### Set core controls
 apollo_control = list(
   modelName  = "ModeChoice",
-  modelDescr = "Nested logit with socio-demographics on mode choice",
+  modelDescr = "Nested logit with socio-demographics and route attributes on mode choice: alternative tree structure",
   indivID    = "tripID",
   panelData  = FALSE,
   nCores     = 6
