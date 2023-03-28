@@ -225,13 +225,13 @@ trips$logdist_walk_jibe = log(trips$troutewalk_jibe_distance_m)
 trips$logdist_bike_jibe = log(trips$troutewalk_jibe_distance_m)
 
 #generating a weighting variable based on walk and bike log distances
-trips <- with(trips,trips[order(trips$logdist_walk_short,trips_hh_p$logdist_bike_short),])
+trips <- with(trips,trips[order(trips$logdist_walk_short,trips$logdist_bike_short),])
 trips <- trips %>% rowwise() %>%
   mutate(weight_short = mean(c(logdist_walk_short, logdist_bike_short)))
 trips <- with(trips,trips[order(trips$logdist_walk_fast,trips$logdist_bike_fast),])
 trips <- trips %>% rowwise() %>%
   mutate(weight_fast = mean(c(logdist_walk_fast, logdist_bike_fast)))
-trips <- with(trips,trips_hh_p[order(trips$logdist_walk_jibe,trips_hh_p$logdist_bike_jibe),])
+trips <- with(trips,trips[order(trips$logdist_walk_jibe,trips$logdist_bike_jibe),])
 trips <- trips %>% rowwise() %>%
   mutate(weight_jibe = mean(c(logdist_walk_jibe, logdist_bike_jibe)))
 
