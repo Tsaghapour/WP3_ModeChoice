@@ -19,10 +19,10 @@ df <- tripdata %>%
     orig_lat = origlat,
     dest_long = destlong,
     dest_lat = destlat
-    )
+  )
 ############################################################################################################################################
 # filtering data based on geographic extent-----------------------------------------------------------------------------------------------------
- 
+
 
 studyRegion <- st_read("C:/Users/e18933/OneDrive - RMIT University/WORK/JIBE/GIS/data/absRegionsReprojected.sqlite",layer="GCCSA_2016_AUST") %>%
   st_buffer(1)
@@ -72,38 +72,44 @@ trips <- subset(tripshhp, surveyperiod=="2016-17" | surveyperiod=="2017-18" | su
 
 #recoding modes
 trips <- trips %>%
-   mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Motorcycle', 'Vehicle Driver', .)))%>%
-   mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Taxi', 'Vehicle Passenger', .))) %>%
-   mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Jogging', 'Walking', .)))%>%
-   mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Public Bus', 'PT', .)))%>%
-   mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Mobility Scooter', 'Bicycle', .)))%>%
-   mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'School Bus', 'PT', .)))%>%
-   mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Train', 'PT', .)))%>%
-   mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Tram', 'PT', .)))
- trips <- trips[!(trips$linkmode=="Other"),]
- 
+  mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Motorcycle', 'Vehicle Driver', .)))%>%
+  mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Taxi', 'Vehicle Passenger', .))) %>%
+  mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Jogging', 'Walking', .)))%>%
+  mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Public Bus', 'PT', .)))%>%
+  mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Mobility Scooter', 'Bicycle', .)))%>%
+  mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'School Bus', 'PT', .)))%>%
+  mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Train', 'PT', .)))%>%
+  mutate_at(c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'),funs(ifelse(. == 'Tram', 'PT', .)))
+trips <- trips[!(trips$linkmode=="Other"),]
+
 # concatenating modes
- trips <- trips %>%
-   unite("combinedmode", c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'), sep ='_', na.rm = TRUE, remove = FALSE)
- trips$combinedmode2 <- sapply(trips$combinedmode, function(x) paste(unique(unlist(str_split(x,"_"))), collapse = "_"))
- trips$combinedmode2 <- gsub('_Other', '', trips$combinedmode2)
- trips$combinedmode2 <- gsub('Other_', '', trips$combinedmode2)
- rep_str = c('Vehicle Driver'='Vehicle Driver','Vehicle Passenger'='Vehicle Passenger','Walking'='Walking', 'Bicycle'='Bicycle','Bicycle_PT'= 'PT_walk_Bike', 
-             'Bicycle_PT_Walking'='PT_walk_Bike', 'Bicycle_Walking_PT'='PT_walk_Bike', 'PT_Walking'='PT_walk_Bike', 'Vehicle Driver_PT_Walking'='PT_Car', 'Bicycle_PT'='PT_Walk_Bike',
-             'Vehicle Driver_Vehicle Passenger_PT_Walking'='PT_Car','Vehicle Driver_Walking_PT'='PT_Car','Vehicle Passenger_PT_Walking'='PT_Car',
-             'Vehicle Passenger_Vehicle Driver_Walking_PT'='PT_Car', 'Vehicle Passenger_Walking_PT'='PT_walk_Bike', 'Walking_PT'='PT_walk_Bike','Walking_PT_Vehicle Driver'='PT_Car',
-             'Walking_PT_Vehicle Passenger'='PT_walk_Bike','Vehicle Driver_Bicycle'='Vehicle Driver','Vehicle Driver_Vehicle Passenger'='Vehicle Driver',
-             'Vehicle Driver_Vehicle Passenger_Walking'='Vehicle Driver','Vehicle Driver_Walking'='Vehicle Driver','Vehicle Driver_Walking_Vehicle Passenger'='Vehicle Driver',
-             'Vehicle Passenger_Vehicle Driver_Walking'='Vehicle Driver','Vehicle Passenger_Walking'='Vehicle Passenger','Vehicle Passenger_Walking_Vehicle Driver'=
-             'Vehicle Driver','Walking_Bicycle'='Walking', 'Bicycle_Walking'='Bicycle', 'Walking_Vehicle Driver'='Vehicle Driver','Walking_Vehicle Passenger'='Vehicle Passenger',
-             'Vehicle Passenger_Vehicle Driver'='Vehicle Driver','Vehicle Passenger_PT_Walking'='PT_Walk_Bike','Vehicle Passenger_Walking_PT'='PT_Walk_Bike','Vehicle Driver_Vehicle Passenger'=
-             'Vehicle Driver','Vehicle Passenger_PT_Walking'='PT_Walk_Bike','Vehicle Driver_PT_walking'='PT_Car','PT_walk_Bike_Walking'='PT_walk_Bike','Vehicle Driver_PT_walk_Bike'='PT_Car',
-             'Vehicle Passenger_PT_walk_Bike'='PT_Car','PT_walk_Bike_Vehicle Driver'='PT_Car','PT_walk_Bike_Vehicle Passenger'='PT_Car','Vehicle Passenger_PT_Car'='PT_Car','Vehicle Driver_PT'='PT_Car',
-             'Vehicle Passenger_PT'='PT_Car','Bicycle_Vehicle Driver'='Vehicle Driver','PT_Vehicle Driver'='PT_Car','PT_Car_Vehicle Passenger'='PT_Car','Vehicle Passenger_Bicycle'='Bicycle',
-             'PT_Car_Bicycle'='PT_Car','PT_Vehicle Passenger'='PT_Car','PT_walk_Bike_Bicycle'='PT_walk_Bike')
+trips <- trips %>%
+  unite("combinedmode", c('mode1', 'mode2', 'mode3','mode4','mode5','mode6','mode7','mode8','mode9','mode10'), sep ='_', na.rm = TRUE, remove = FALSE)
+trips$combinedmode2 <- sapply(trips$combinedmode, function(x) paste(unique(unlist(str_split(x,"_"))), collapse = "_"))
+trips$combinedmode2 <- gsub('_Other', '', trips$combinedmode2)
+trips$combinedmode2 <- gsub('Other_', '', trips$combinedmode2)
+rep_str = c('Vehicle Driver'='Vehicle Driver','Vehicle Passenger'='Vehicle Passenger','Walking'='Walking', 'Bicycle'='Bicycle','Bicycle_PT'= 'PT_walk_Bike', 
+            'Bicycle_PT_Walking'='PT_walk_Bike', 'Bicycle_Walking_PT'='PT_walk_Bike', 'PT_Walking'='PT_walk_Bike', 'Vehicle Driver_PT_Walking'='PT_Car', 'Bicycle_PT'='PT_Walk_Bike',
+            'Vehicle Driver_Vehicle Passenger_PT_Walking'='PT_Car','Vehicle Driver_Walking_PT'='PT_Car','Vehicle Passenger_PT_Walking'='PT_Car',
+            'Vehicle Passenger_Vehicle Driver_Walking_PT'='PT_Car', 'Vehicle Passenger_Walking_PT'='PT_walk_Bike', 'Walking_PT'='PT_walk_Bike','Walking_PT_Vehicle Driver'='PT_Car',
+            'Walking_PT_Vehicle Passenger'='PT_walk_Bike','Vehicle Driver_Bicycle'='Vehicle Driver','Vehicle Driver_Vehicle Passenger'='Vehicle Driver',
+            'Vehicle Driver_Vehicle Passenger_Walking'='Vehicle Driver','Vehicle Driver_Walking'='Vehicle Driver','Vehicle Driver_Walking_Vehicle Passenger'='Vehicle Driver',
+            'Vehicle Passenger_Vehicle Driver_Walking'='Vehicle Driver','Vehicle Passenger_Walking'='Vehicle Passenger','Vehicle Passenger_Walking_Vehicle Driver'=
+              'Vehicle Driver','Walking_Bicycle'='Walking', 'Bicycle_Walking'='Bicycle', 'Walking_Vehicle Driver'='Vehicle Driver','Walking_Vehicle Passenger'='Vehicle Passenger',
+            'Vehicle Passenger_Vehicle Driver'='Vehicle Driver','Vehicle Passenger_PT_Walking'='PT_Walk_Bike','Vehicle Passenger_Walking_PT'='PT_Walk_Bike','Vehicle Driver_Vehicle Passenger'=
+              'Vehicle Driver','Vehicle Passenger_PT_Walking'='PT_Walk_Bike','Vehicle Driver_PT_walking'='PT_Car','PT_walk_Bike_Walking'='PT_walk_Bike','Vehicle Driver_PT_walk_Bike'='PT_Car',
+            'Vehicle Passenger_PT_walk_Bike'='PT_Car','PT_walk_Bike_Vehicle Driver'='PT_Car','PT_walk_Bike_Vehicle Passenger'='PT_Car','Vehicle Passenger_PT_Car'='PT_Car','Vehicle Driver_PT'='PT_Car',
+            'Vehicle Passenger_PT'='PT_Car','Bicycle_Vehicle Driver'='Vehicle Driver','PT_Vehicle Driver'='PT_Car','PT_Car_Vehicle Passenger'='PT_Car','Vehicle Passenger_Bicycle'='Bicycle',
+            'PT_Car_Bicycle'='PT_Car','PT_Vehicle Passenger'='PT_Car','PT_walk_Bike_Bicycle'='PT_walk_Bike')
 
 trips$mainmode <- str_replace_all(trips$combinedmode2, rep_str)
 trips$mainmode[trips$mainmode=="PT"] = "PT_walk_Bike"
+
+# mandatory data "home to work/education + work/education to home"
+mandatory_hwe<-subset(trips, trips$origplace1=="Accommodation"& trips$destpurp1=="Work Related" | trips$destpurp1=="Education")
+mandatory_weh<-subset(trips, trips$origplace1=="Workplace" | trips$origplace1=="Place of Education"& trips$destpurp1=="At or Go Home")
+mandatory_tot<-rbind(mandatory_hwe,mandatory_weh)
+trips<-mandatory_tot
 
 #generaing age groups 
 trips$agegroup[trips$age<=14] = 1
@@ -236,13 +242,6 @@ trips <- trips %>% rowwise() %>%
   mutate(weight_jibe = mean(c(logdist_walk_jibe, logdist_bike_jibe)))
 
 # mandatory tours
-trips <- trips[order(trips$persid),]
-mandatory_tours <- trips %>%
-  group_by(persid)
-mandatory_tours <- subset(mandatory_tours, origpurp1 == "At Home" | origpurp1 == "Work Related" | origpurp1 == "Education")
-mandatory_tours <- subset(mandatory_tours, destpurp1 == "At or Go Home" | destpurp1 == "Work Related" | destpurp1 == "Education")
-mandatory_tours <- semi_join(mandatory_tours,route_attributes, by="tripid")
-write.csv(mandatory_tours,file = "C:/Users/e18933/OneDrive - RMIT University/DOT_VISTA/Processed Data/mandatory_tours.csv")
 
 #joining with gnaf point for area-based measures
 #orig long&lat of mandatory trips were joined to gnaf points using near analysis in qgis 
@@ -253,16 +252,16 @@ write.csv(mandatory_tours,file = "C:/Users/e18933/OneDrive - RMIT University/DOT
 #trips_alljoined <-merge(mandatory_gnaf, gnaf, by="gnaf_pid")
 
 # filtering trips started from home
-hb_trips <- mandatory_tours %>% 
-  group_by(persid)
-hb_trips <- hb_trips[hb_trips$tripno == 1 & hb_trips$origpurp1 == "At Home", ] 
+#hb_trips <- mandatory_tours %>% 
+#  group_by(persid)
+#hb_trips <- hb_trips[hb_trips$tripno == 1 & hb_trips$origpurp1 == "At Home", ] 
 
 # filtering mandatory(work&education) trips 
-mandatory_trips <- subset(hb_trips, trippurp=="Education"|trippurp=="Work Related")
+#mandatory_trips <- subset(hb_trips, trippurp=="Education"|trippurp=="Work Related")
 #mandatory_trips <- mandatory_trips %>%
 #  relocate(gnaf_pid, .before = origdist_gnaf)
 
 # exporting work and education trips to csv format
-write.csv(mandatory_trips,file = "C:/Users/e18933/OneDrive - RMIT University/DOT_VISTA/Processed Data/mandatory_trips.csv")
+write.csv(trips,file = "C:/Users/e18933/OneDrive - RMIT University/DOT_VISTA/Processed Data/mandatory_trips.csv")
 
 
